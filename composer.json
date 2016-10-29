@@ -1,0 +1,21 @@
+{
+  "name" : "windwork/util",
+  "description" : "windwork util component，Windwork 工具组件",
+  "version" : "0.2.0",
+  "require" : {
+    "php" : ">=5.5.0",
+    "windwork/core" : "*",
+    "windwork/visitor" : "*"
+  },
+  "license" : "MIT",
+  "autoload" : {
+    "psr-4" : {
+      "wf\\util\\" : "lib"
+    }
+  },
+  "type" : "library",
+  "authors" : [ {
+    "name" : "Windwork Community",
+    "homepage" : "http://windwork.org"
+  } ]
+}
