@@ -71,4 +71,18 @@ class Env {
 		
 		return $isGzEnabled;
 	}
+	
+	/**
+	 * 文件上传的最大大小
+	 */
+	public static function getUploadMaxSize() {
+		$maxSize = ini_get('upload_max_filesize');
+		$maxPostSize = ini_get('post_max_size');
+		$cfgSize = cfg('upload_max_size');
+		
+		$maxSize = $maxSize > $maxPostSize ? $maxPostSize : $maxSize;
+		$maxSize = $maxSize > $cfgSize ? $cfgSize : $maxSize;
+		
+		return $maxSize;
+	}
 }
