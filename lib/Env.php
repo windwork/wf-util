@@ -4,7 +4,7 @@
  * 
  * 一个开源的PHP轻量级高效Web开发框架
  * 
- * @copyright   Copyright (c) 2008-2015 Windwork Team. (http://www.windwork.org)
+ * @copyright   Copyright (c) 2008-2016 Windwork Team. (http://www.windwork.org)
  * @license     http://opensource.org/licenses/MIT	MIT License
  */
 namespace wf\util;
@@ -73,16 +73,43 @@ class Env {
 	}
 	
 	/**
-	 * 文件上传的最大大小
+	 * 文件上传最大尺寸（M）
 	 */
 	public static function getUploadMaxSize() {
-		$maxSize = ini_get('upload_max_filesize');
-		$maxPostSize = ini_get('post_max_size');
-		$cfgSize = cfg('upload_max_size');
+		static $uploadMaxSize;
+		if ($uploadMaxSize) {
+			return $uploadMaxSize;
+		}
 		
-		$maxSize = $maxSize > $maxPostSize ? $maxPostSize : $maxSize;
-		$maxSize = $maxSize > $cfgSize ? $cfgSize : $maxSize;
+		// =>（M）
+		$sizeToM = function($size) {
+			$size = trim($size);
+			
+			if(preg_match("/([\\.\\d]+)M/i", $size, $match)) {
+				// M => M
+				return $match[1];
+			} elseif (preg_match("/([\\.\\d]+)G/i", $size, $match)) {
+				// G => M
+				return $match[1] * 1024;
+			} elseif (preg_match("/([\\.\\d]+)K/i", $size, $match)) {
+				// K => M
+				return number_format($match[1]/1024, 2);
+			} else {
+				// B => M
+				return number_format($size/(1024*1024), 2);
+			}
+		};
 		
-		return $maxSize;
+		$uploadMaxFilesize = ini_get('upload_max_filesize');
+		$postMaxSize       = ini_get('post_max_size');
+		$cfgMaxSize        = cfg('upload_max_size');
+		
+		// 最小允许上传1M
+		$cfgMaxSize || $cfgMaxSize = '1M';
+		
+		// 单位统一转成M后，取最小
+		$uploadMaxSize = min($sizeToM($uploadMaxFilesize), $sizeToM($postMaxSize), $sizeToM($cfgMaxSize));
+		
+		return $uploadMaxSize . 'M';
 	}
 }
