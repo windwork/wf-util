@@ -5,10 +5,15 @@
   "require" : {
     "php" : ">=5.5.0",
     "windwork/core" : "*",
-    "windwork/visitor" : "*"
+    "windwork/cache" : "*",
+    "windwork/db" : "*",
+    "windwork/logger" : "*",
+    "windwork/storage" : "*",
+    "windwork/mvc" : "*"
   },
   "license" : "MIT",
   "autoload" : {
+    "files" : [ "lib/functions.php" ],
     "psr-4" : {
       "wf\\util\\" : "lib"
     }
