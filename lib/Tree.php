@@ -4,8 +4,8 @@
  * 
  * 一个开源的PHP轻量级高效Web开发框架
  * 
- * @copyright   Copyright (c) 2008-2016 Windwork Team. (http://www.windwork.org)
- * @license     http://opensource.org/licenses/MIT	MIT License
+ * @copyright Copyright (c) 2008-2017 Windwork Team. (http://www.windwork.org)
+ * @license   http://opensource.org/licenses/MIT
  */
 namespace wf\util;
 
@@ -31,7 +31,7 @@ namespace wf\util;
  *   这里用不上sibling、forest
  * 
  * @package     wf.util
- * @author      erzh <cmpan@qq.com>
+ * @author      cm <cmpan@qq.com>
  * @since       0.1.0
  */
 class Tree {
@@ -120,13 +120,15 @@ class Tree {
 	 *
 	 * @param int $id 结点的id
 	 * @param bool $isReturnSelf 是否返回自己
+	 * @param array $unReturnFields 不返回的属性，可设置：[isLeaf, ancestorIdArr, descendantIdArr, descendantId, childArr, isLastNode, icon]
 	 * @return array
 	 */
-	public function get($id = 0, $isReturnSelf = true) {
+	public function get($id = 0, $isReturnSelf = true, array $unReturnFields = []) {
 		// 层次排序
-		$this->levelOrder(0);		
+		$this->levelOrder(0);
+		
 		// 设置缩进图标/形状
-		$this->setLevelIcon();
+		empty($unReturnFields['icon']) && $this->setLevelIcon();
 		
 		$cats = $this->outNodes;
 		if($id && isset($cats[$id])) {
@@ -141,6 +143,14 @@ class Tree {
 					unset($cats[$key]);
 				}
 			}
+		}
+		
+		if ($unReturnFields) {
+		    foreach ($cats as $key => $_tmp) {
+		        foreach ($unReturnFields as $field) {
+		            unset($cats[$key][$field]);
+		        }
+		    }
 		}
 		
 		return $cats;
@@ -221,14 +231,14 @@ class Tree {
 					$this->outNodes[$nodeId]['descendantIdArr'][] = $nodeId;
 					$this->outNodes[$nodeId]['descendantId']      = $nodeId;
 					$this->outNodes[$nodeId]['topLevelId']        = $nodeId;  // 结点的顶层祖先结点的id	
-					$this->outNodes[$nodeId]['chileArr']          = array();  // 子结点id
+					$this->outNodes[$nodeId]['childArr']          = array();  // 子结点id
 				} else {
 					$this->outNodes[$nodeId]['isTop']             = false;
 					$this->outNodes[$nodeId]['level']             = @$this->outNodes[$nodeFid]['level'] + 1;					
 					$this->outNodes[$nodeId]['ancestorIdArr']     = array_merge($this->outNodes[$nodeFid]['ancestorIdArr'], array($nodeId));
 					$this->outNodes[$nodeId]['topLevelId']        = $this->outNodes[$nodeFid]['topLevelId'];
-					$this->outNodes[$nodeId]['chileArr']          = array();
-					$this->outNodes[$nodeFid]['chileArr'][]   = $nodeId;
+					$this->outNodes[$nodeId]['childArr']          = array();
+					$this->outNodes[$nodeFid]['childArr'][]   = $nodeId;
 					$this->outNodes[$nodeFid]['isLeaf']       = false; // 设置父结点为非叶子（子树）	
 						
 					// 将结点id添加到该结点祖先结点的子孙id列表

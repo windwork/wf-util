@@ -4,8 +4,8 @@
  * 
  * 一个开源的PHP轻量级高效Web开发框架
  * 
- * @copyright   Copyright (c) 2008-2016 Windwork Team. (http://www.windwork.org)
- * @license     http://opensource.org/licenses/MIT	MIT License
+ * @copyright Copyright (c) 2008-2017 Windwork Team. (http://www.windwork.org)
+ * @license   http://opensource.org/licenses/MIT
  */
 namespace wf\util;
 
@@ -13,26 +13,36 @@ namespace wf\util;
  * 验证类
  * 
  * @package     wf.util
- * @author      erzh <cmpan@qq.com>
+ * @author      cm <cmpan@qq.com>
  * @since       0.1.0
  */
 class Validator {
+    /**
+     * 
+     * @var array
+     */
+    private $errs = [];
+    
+    public function getErrs() {
+        return $this->errs;
+    }
+    
 	/**
 	 * 批量验证是否有错误
 	 * @param array $data 
 	 * @param array $rules 验证规则  array('待验证数组下标' => array('验证方法1' => '提示信息1', '验证方法2' => '提示信息2'), ...)
-	 * @param bool $validAll = true 是否验证所有属性，如果为false只验证到第一个不符合规则的属性就停止验证
-	 * @return array 错误信息，返回空数组则验证通过
+	 * @param bool $firstErrBreak = false 第一次验证不通过时返回
+	 * @return bool
 	 */
-	public static function validErr($data, $rules, $validAll = true) {
+	public function validate(array $data, array $rules, $firstErrBreak = false) {
 		$aliases = [
 			'empty' => 'isEmpty',
 		];
 		
-		$validErrs = array();
+		$this->errs = [];
 		foreach ($rules as $key => $fieldRule) {
 			// 为空并且允许为空则不检查
-			if(empty($data[$key]) && !array_key_exists('notEmpty', $fieldRule)) {
+			if(empty($data[$key]) && !array_key_exists('required', $fieldRule)) {
 				continue;
 			}
 			
@@ -51,7 +61,7 @@ class Validator {
 				// 自定义格式必须是以正则匹配规则作为下标，提示消息作为值
 				if (preg_match("/[^a-z]/i", $method[0])) {
 					if(!preg_match($method, $data[$key])) {
-						$validErrs[] = $msg;
+						$this->errs[] = $msg;
 					}
 					
 					continue;
@@ -64,24 +74,22 @@ class Validator {
 				    $valid  = call_user_func_array($callback, [$string, $msg]);
 				    
 					if(($isNot && $valid) || (!$isNot && !$valid)) {
-						$validErrs[] = $msg['msg'];
-						
-						if (!$validAll) {
-							return $validErrs;
+						$this->errs[] = $msg['msg'];
+						if ($firstErrBreak) {
+						    return false;
 						}
 					}
 				} elseif (!call_user_func($callback, $string)) {
 					// 验证方法只有待验证参数一个一个参数
-					$validErrs[] = $msg;
-					
-					if (!$validAll) {
-						return $validErrs;
+					$this->errs[] = $msg;
+					if ($firstErrBreak) {
+					    return false;
 					}
 				}
 			}
 		}
 		
-		return $validErrs;
+		return !(bool)$this->errs;
 	}
 	
 	/**
@@ -111,7 +119,7 @@ class Validator {
 	 * @param string $var
 	 * @return bool
 	 */
-	public static function notEmpty($var) {
+	public static function required($var) {
 		return !empty($var);
 	}
 

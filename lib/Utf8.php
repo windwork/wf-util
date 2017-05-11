@@ -4,8 +4,8 @@
  * 
  * 一个开源的PHP轻量级高效Web开发框架
  * 
- * @copyright   Copyright (c) 2008-2016 Windwork Team. (http://www.windwork.org)
- * @license     http://opensource.org/licenses/MIT	MIT License
+ * @copyright Copyright (c) 2008-2017 Windwork Team. (http://www.windwork.org)
+ * @license   http://opensource.org/licenses/MIT
  */
 namespace wf\util;
 
@@ -37,7 +37,7 @@ class Utf8 {
 		
 		static $UC2GBTABLE = '';
 		if(empty($UC2GBTABLE)) {
-			$filename = SRC_PATH."data/gbk-utf8.dat";
+			$filename = ROOT_DIR."/data/gbk-utf8.dat";
 			$fp = fopen($filename, "r");
 			while(false !== $l = fgets($fp, 15)) {
 				$UC2GBTABLE[hexdec(substr($l, 7, 6))] = hexdec(substr($l, 0, 6));
@@ -93,7 +93,7 @@ class Utf8 {
 		static $GBK2UTF8_CODETABLE = '';
 		
 		if(empty($GBK2UTF8_CODETABLE)) {
-			$filename = SRC_PATH."wf/res/gbk-utf8.dat";
+			$filename = ROOT_DIR."/wf/res/gbk-utf8.dat";
 			$fp = fopen($filename, "r");
 			while (false !== $l = fgets($fp, 15)) {
 				$GBK2UTF8_CODETABLE[hexdec(substr($l, 0, 6))] = substr($l, 7, 6);

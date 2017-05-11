@@ -4,8 +4,8 @@
  * 
  * 一个开源的PHP轻量级高效Web开发框架
  * 
- * @copyright   Copyright (c) 2008-2016 Windwork Team. (http://www.windwork.org)
- * @license     http://opensource.org/licenses/MIT	MIT License
+ * @copyright Copyright (c) 2008-2017 Windwork Team. (http://www.windwork.org)
+ * @license   http://opensource.org/licenses/MIT
  */
 namespace wf\util;
 
@@ -102,7 +102,7 @@ class Env {
 		
 		$uploadMaxFilesize = ini_get('upload_max_filesize');
 		$postMaxSize       = ini_get('post_max_size');
-		$cfgMaxSize        = cfg('upload_max_size');
+		$cfgMaxSize        = cfg('storage.sizeLimit');
 		
 		// 最小允许上传1M
 		$cfgMaxSize || $cfgMaxSize = '1M';

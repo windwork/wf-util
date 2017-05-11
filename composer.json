@@ -1,7 +1,7 @@
 {
   "name" : "windwork/util",
   "description" : "windwork util component，Windwork 工具组件",
-  "version" : "0.2.0",
+  "version" : "0.3.0",
   "require" : {
     "php" : ">=5.5.0",
     "windwork/core" : "*",
@@ -9,11 +9,13 @@
     "windwork/db" : "*",
     "windwork/logger" : "*",
     "windwork/storage" : "*",
-    "windwork/mvc" : "*"
+    "windwork/template" : "*",
+    "windwork/email" : "*",
+    "windwork/web" : "*"
   },
   "license" : "MIT",
   "autoload" : {
-    "files" : [ "lib/functions.php" ],
+    "files" : [ "lib/helper.php" ],
     "psr-4" : {
       "wf\\util\\" : "lib"
     }
