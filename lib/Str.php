@@ -438,4 +438,89 @@ class Str {
 	public static function isEqual($str, $expect) {
 		return strtolower((string)$str) === strtolower((string)$expect);
 	}
+	
+	/**
+	 * 转换编码
+	 * @param string $str
+	 * @param string $from
+	 * @param string $to
+	 */
+	public static function convertEncoding($str, $from, $to) 
+	{
+	    if(function_exists('iconv')) {
+	        return iconv($from, $to . '//ignore', $str);
+	    } elseif(function_exists('mb_convert_encoding')) {
+	        return mb_convert_encoding($str, $to, $from);
+	    }
+	    
+	    throw new \Exception('请先安装PHP iconv或mb_string扩展');
+	}
+	
+	/**
+	 * 获取字符串长度
+	 * @param string $str
+	 * @param string $encoding = 'UTF-8'
+	 * @throws \Exception
+	 */
+	public static function strlen($str, $encoding = 'UTF-8') {
+	    if(function_exists('iconv_strlen')) {
+	        return iconv_strlen($str, $encoding);
+	    } elseif(function_exists('mb_strlen')) {
+	        return mb_strlen($str, $encoding);
+	    }
+	    throw new \Exception('请先安装PHP iconv或mb_string扩展');
+	}
+	
+	/**
+	 * 截取字符串
+	 * @param string $str
+	 * @param int $len
+	 * @param int $start
+	 * @param string $encoding = 'UTF-8'
+	 * @throws \Exception
+	 */
+	public static function substr($str, $len, $start = 0, $encoding = 'UTF-8') {
+	    if(function_exists('iconv_substr')) {
+	        return iconv_substr($str, $start, $len, $encoding);
+	    } elseif(function_exists('mb_substr')) {
+	        return mb_substr($str, $start, $len, $encoding);
+	    }
+	    throw new \Exception('请先安装PHP iconv或mb_string扩展');
+	}
+	
+	/**
+	 * 查找字符串第一次出现的位置
+	 * @param string $haystack
+	 * @param string $needle
+	 * @param int $start = 0 开始查找的位置
+	 * @param string $encoding = 'UTF-8'
+	 * @throws \Exception
+	 * @return string
+	 */
+	public static function strpos($haystack, $needle, $start = 0, $encoding = 'UTF-8') {
+	    if(function_exists('iconv_substr')) {
+	        return iconv_strpos($haystack, $needle, $start, $encoding);
+	    } elseif(function_exists('mb_substr')) {
+	        return mb_strpos($haystack, $needle, $start, $encoding);
+	    }
+	    throw new \Exception('请先安装PHP iconv或mb_string扩展');
+	}
+	
+	/**
+	 * 查找字符串最后一次出现的位置
+	 * @param string $haystack
+	 * @param string $needle
+	 * @param int $start = 0 开始查找的位置
+	 * @param string $encoding = 'UTF-8'
+	 * @throws \Exception
+	 * @return string
+	 */
+	public static function strrpos($haystack, $needle, $start = 0, $encoding = 'UTF-8') {
+	    if(function_exists('iconv_substr')) {
+	        return iconv_strrpos($haystack, $needle, $start, $encoding);
+	    } elseif(function_exists('mb_substr')) {
+	        return mb_strrpos($haystack, $needle, $start, $encoding);
+	    }
+	    throw new \Exception('请先安装PHP iconv或mb_string扩展');
+	}
 }
