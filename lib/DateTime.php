@@ -16,7 +16,8 @@ namespace wf\util;
  * @author      cm <cmpan@qq.com>
  * @since       0.1.0
  */
-class DateTime {
+class DateTime 
+{
 
 
 	/**
@@ -27,7 +28,8 @@ class DateTime {
 	 * @param string $his 时分秒显示格式，空则不显示
 	 * @return string
 	 */
-	function smartDate($time, $ymd = 'Y-m-d', $his = 'H:i:s') {
+	function smartDate($time, $ymd = 'Y-m-d', $his = 'H:i:s') 
+	{
 		$r = '';
 	
 		if (abs(time() - $time) < 24*3600) {

@@ -14,14 +14,16 @@ namespace wf\util;
  * @author cm
  *
  */
-class Env {
+class Env 
+{
 
 	/**
 	 * 获取服务器真实ip
 	 *
 	 * @return string
 	 */
-	public static function getServerIP() {
+	public static function getServerIP()
+	{
 		static $serverIP = null;
 	
 		if ($serverIP !== null) {
@@ -46,7 +48,8 @@ class Env {
 	 * 
 	 * @return float
 	 */
-	public static function getMemUsed() {
+	public static function getMemUsed()
+	{
 		if (function_exists('memory_get_usage')) {
 			return round(memory_get_usage()/(1024*1024), 4); // by M
 		} else {
@@ -58,7 +61,8 @@ class Env {
 	 * 是否启用gz压缩，服务器端支持压缩并且客户端支持解压缩则启用压缩
 	 * @return bool
 	 */
-	public static function isGzEnabled() {
+	public static function isGzEnabled()
+	{
 		static $isGzEnabled = null;
 		if (null === $isGzEnabled) {
 			// 配置文件中启用gzip
@@ -75,7 +79,8 @@ class Env {
 	/**
 	 * 文件上传最大尺寸（M）
 	 */
-	public static function getUploadMaxSize() {
+	public static function getUploadMaxSize()
+	{
 		static $uploadMaxSize;
 		if ($uploadMaxSize) {
 			return $uploadMaxSize;

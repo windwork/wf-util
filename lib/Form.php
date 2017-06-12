@@ -22,7 +22,8 @@ namespace wf\util;
  * @author      cm <cmpan@qq.com>
  * @since       0.1.0
  */
-class Form extends \wf\core\Object {
+class Form extends \wf\core\Object
+{
 	protected $fields = array();
 	protected $elements = array();
 	protected $isMakeDiv = false;
@@ -78,7 +79,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	public function addElement($element = array()) {
+	public function addElement($element = array())
+	{
 		// 表单元素的type、name属性必须有
 		if (empty($element['type']) || empty($element['name'])) {			
 			throw new \Exception(get_called_class() . '::addElement() param should have "type" and "name" Element');
@@ -109,7 +111,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param string $elements
 	 */
-	public function addElements($elements = array()) {
+	public function addElements($elements = array())
+	{
 		foreach ($elements as $element) {
 			$this->addElement($element);
 		}
@@ -120,7 +123,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function text($element = array()) {
+	protected function text($element = array())
+	{
 		$html = '<input type="text" name="'.$element['name'].'" id="'.$element['id'].'"
 				 class="text ' . (empty($element['class']) ? '' : $element['class']) . '"';
 		empty($element['value'])      || $html .= ' value="'. htmlspecialchars($element['value']).'"';
@@ -137,7 +141,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function hidden($element = array()) {
+	protected function hidden($element = array())
+	{
 		$html = "<input type=\"hidden\" name=\"{$element['name']}\" id=\"{$element['id']}\"";
 		empty($element['value']) || $html .= ' value="'. htmlspecialchars($element['value']).'"';
 		$html .= ' />';
@@ -149,7 +154,8 @@ class Form extends \wf\core\Object {
 	 *
 	 * @param array $element
 	 */
-	protected function image($element = array()) {
+	protected function image($element = array())
+	{
 		if(empty($element['value'])) {
 			$img = 'static/images/nopic.png';
 		} else {
@@ -173,7 +179,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function custom($element = array()) {
+	protected function custom($element = array())
+	{
 		$this->elements[$element['name']] = @$element['custom'];
 	}
 	
@@ -182,7 +189,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function checkbox($element = array()) {
+	protected function checkbox($element = array())
+	{
 		if (empty($element['values'])) {
 			throw new \Exception(get_called_class() . '::checkbox() param should have "values" Element');
 		}
@@ -214,7 +222,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function radio($element = array()) {
+	protected function radio($element = array())
+	{
 		if (empty($element['values'])) {
 			throw new \Exception(get_called_class() . '::radio() param should have "values" Element');
 		}
@@ -237,7 +246,8 @@ class Form extends \wf\core\Object {
 	/*
 	 * 下拉菜单
 	 */
-	protected function select($element = array()) {
+	protected function select($element = array())
+	{
 		if (empty($element['values'])) {
 			throw new \Exception(get_called_class() . '::select() param should have "values" Element');
 		}
@@ -263,7 +273,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function multiple($element = array()) {
+	protected function multiple($element = array())
+	{
 		$element['multiple'] = true;
 		$this->select($element);
 	}
@@ -272,7 +283,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function textarea($element = array()) {		
+	protected function textarea($element = array())
+	{		
 		empty($element['cols']) && $element['cols'] = 40;
 		empty($element['rows']) && $element['rows'] = 8;
 		empty($element['class']) && $element['class'] = '';
@@ -294,7 +306,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function html($element = array()) {
+	protected function html($element = array())
+	{
 		empty($element['cols']) && $element['cols'] = 68;
 		empty($element['rows']) && $element['rows'] = 20;
 		empty($element['class']) && $element['class'] = 'editor';
@@ -307,7 +320,8 @@ class Form extends \wf\core\Object {
 	 * 
 	 * @param array $element
 	 */
-	protected function date($element = array()) {
+	protected function date($element = array())
+	{
 		$html = '<input class="text Wdate" onfocus="WdatePicker()" type="text" name="'.$element['name'].'" id="'.$element['id'].'"';
 		empty($element['value'])      || $html .= ' value="'. htmlspecialchars($element['value']).'"';
 		empty($element['size'])       || $html .= ' size="'.(int)$element['size'].'"';
@@ -324,7 +338,8 @@ class Form extends \wf\core\Object {
 	 * @todo
 	 * @param array $element
 	 */
-	protected function time($element = array()) {
+	protected function time($element = array())
+	{
 		
 	}
 
@@ -336,7 +351,8 @@ class Form extends \wf\core\Object {
 	 * @param int $cel2Width 表单第2列宽度，$cells == 3 时有效
 	 * @return string
 	 */
-	public function makeForm($cells = 3) {
+	public function makeForm($cells = 3)
+	{
 		$fnc = $this->isMakeDiv ? "makeDivForm" : "makeTableForm";
 		return $this->$fnc($cells);
 	}
@@ -348,7 +364,8 @@ class Form extends \wf\core\Object {
 	 * @param int $cel1Width
 	 * @param int $cel2Width
 	 */
-	public function makeDivForm() {
+	public function makeDivForm()
+	{
 		$form = '';
 		foreach ($this->elements as $key => $element) {
 			if ($this->fields[$key]['type'] == 'hidden') {
@@ -377,7 +394,8 @@ class Form extends \wf\core\Object {
 		return $form;
 	}
 	
-	public function makeByGroup() {
+	public function makeByGroup()
+	{
 		$rs = array();
 		foreach ($this->elements as $key => $element) {
 			if ($this->fields[$key]['type'] == 'hidden') {
@@ -420,7 +438,8 @@ class Form extends \wf\core\Object {
 	 * @param int $cel2Width 表单第2列宽度，$cells == 3 时有效
 	 * @return string
 	 */
-	protected function makeTableForm($cells = 3) {
+	protected function makeTableForm($cells = 3)
+	{
 		$form = '';
 		$this->hasFormTag &&
 		$form = '<form '
@@ -489,7 +508,8 @@ class Form extends \wf\core\Object {
 	 * @param string $action
 	 * @return \wf\util\Form
 	 */
-	public function setAction($action = '') {
+	public function setAction($action = '')
+	{
 		$this->action = $action;
 		return $this;
 	}
@@ -500,7 +520,8 @@ class Form extends \wf\core\Object {
 	 * @param string $enctype
 	 * @return \wf\util\Form
 	 */
-	public function setEnctype($enctype = 'application/x-www-form-urlencoded') {
+	public function setEnctype($enctype = 'application/x-www-form-urlencoded')
+	{
 		$this->enctype = $enctype;
 		return $this;
 	}
@@ -511,7 +532,8 @@ class Form extends \wf\core\Object {
 	 * @param string $id
 	 * @return \wf\util\Form
 	 */
-	public function setId($id) {
+	public function setId($id)
+	{
 		$this->id = $id;
 		return $this;
 	}
@@ -522,7 +544,8 @@ class Form extends \wf\core\Object {
 	 * @param string $method
 	 * @return \wf\util\Form
 	 */
-	public function setMethod($method = 'post') {
+	public function setMethod($method = 'post')
+	{
 		$this->method = $method;
 		return $this;
 	}
@@ -533,7 +556,8 @@ class Form extends \wf\core\Object {
 	 * @param string $target
 	 * @return \wf\util\Form
 	 */
-	public function setTarget($target = '_self') {
+	public function setTarget($target = '_self')
+	{
 		$this->target = $target;
 		return $this;
 	}
@@ -544,7 +568,8 @@ class Form extends \wf\core\Object {
 	 * @param string $append
 	 * @return \wf\util\Form
 	 */
-	public function setAppend($append = '') {
+	public function setAppend($append = '')
+	{
 		$this->append = $append;
 		return $this;
 	}
@@ -555,7 +580,8 @@ class Form extends \wf\core\Object {
 	 * @param bool $has
 	 * @return \wf\util\Form
 	 */
-	public function setHasFormTag($has = true) {
+	public function setHasFormTag($has = true)
+	{
 		$this->hasFormTag = $has;
 		return $this;
 	}
@@ -567,7 +593,8 @@ class Form extends \wf\core\Object {
 	 * @param string|array $values
 	 * @return array
 	 */
-	public static function arrValueFormat($values) {
+	public static function arrValueFormat($values)
+	{
 		if (is_array($values)) {
 			return $values;
 		}	        
@@ -589,7 +616,8 @@ class Form extends \wf\core\Object {
 	 * @param bool $isMakeDiv
 	 * @return \wf\util\Form
 	 */
-	public function setIsMakeDiv($isMakeDiv) {
+	public function setIsMakeDiv($isMakeDiv)
+	{
 		$this->isMakeDiv = (bool)$isMakeDiv;
 		return $this;
 	}

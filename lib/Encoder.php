@@ -38,7 +38,8 @@ namespace wf\util;
  * @author      cm <cmpan@qq.com>
  * @since       0.1.0
  */
-class Encoder {
+class Encoder 
+{
     /**
      * 编码
      * 将$data用base64编码并将其中的"/","+","="分别换成"_","-",""
@@ -46,7 +47,8 @@ class Encoder {
      * @param string $string
      * @return string
      */
-	public static function encode($string) {
+	public static function encode($string) 
+	{
 		$string = base64_encode($string);
 		$string = rtrim($string, '=');
 		$string = strtr($string, '+/', '-_');
@@ -61,7 +63,8 @@ class Encoder {
 	 * @param string $string
 	 * @return string
 	 */
-	public static function decode($string) {
+	public static function decode($string) 
+	{
 		$string = strtr($string, '-_', '+/');
 		$string = base64_decode($string);
 		
