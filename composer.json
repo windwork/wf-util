@@ -1,19 +1,20 @@
 {
-  "name" : "windwork/util",
-  "description" : "windwork util component，Windwork 工具组件",
-  "version" : "0.5.0",
-  "require" : {
-    "php" : ">=5.5.0"
-  },
-  "license" : "MIT",
-  "autoload" : {
-    "psr-4" : {
-      "wf\\util\\" : "lib"
-    }
-  },
-  "type" : "library",
-  "authors" : [ {
-    "name" : "Windwork Community",
-    "homepage" : "http://windwork.org"
-  } ]
+	"name" : "windwork/util",
+	"description" : "windwork util component，Windwork 工具组件",
+	"version" : "0.5.1",
+	"require" : {
+		"php" : ">=5.5.0"
+	},
+	"license" : "MIT",
+	"autoload" : {
+		"psr-4" : {
+			"wf\\util\\" : "lib"
+		}
+	},
+	"type" : "library",
+	"authors" : [{
+			"name" : "Windwork Community",
+			"homepage" : "http://windwork.org"
+		}
+	]
 }
