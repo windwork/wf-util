@@ -15,39 +15,40 @@ namespace wf\util;
  * 树结点的结构 array('结点编号', '父结点编号', ... )
  * 
  * 术语：
- *   tree 树
- *   subTree 子数
- *   node 结点
- *   degree 结点的度
- *   leaf 叶子，度为0的结点
- *   child 孩子，结点子树的根
- *   parent 结点的上层结点
- *   level 结点的层次
- *   depth 数的深度，树中结点最大层次数
- *   ancestor 祖先，树叶的顶层父结点
+ *   tree       树
+ *   subTree    子树
+ *   node       结点
+ *   degree     结点的度
+ *   leaf       叶子，度为0的结点
+ *   child      孩子，结点子树的根
+ *   parent     结点的上层结点
+ *   level      结点的层次
+ *   depth      数的深度，树中结点最大层次数
+ *   ancestor   祖先，树叶的顶层父结点
  *   descendant 树的子孙，结点的祖先和子孙不包含结点 本身
- *   path 路径，一个结点到达另一个结点经过的结点
+ *   path       路径，一个结点到达另一个结点经过的结点
  *   
- *   这里用不上sibling、forest
+ *   我们这个类没用上sibling、forest
  * 
  * @package     wf.util
  * @author      cm <cmpan@qq.com>
  * @since       0.1.0
  */
-class Tree {
+class Tree
+{
 	/**
 	 * 要处理的结点的数组
 	 *
 	 * @var array
 	 */
-	protected $inNodes = array();
+	protected $inNodes = [];
 	
 	/**
 	 * 处理后的结点的数组
 	 *
 	 * @var array
 	 */
-	protected $outNodes = array();
+	protected $outNodes = [];
 	
 	/**
 	 * 结点中表示该结点的父结点id的属性名（下标）
@@ -76,26 +77,16 @@ class Tree {
 	 * @var int
 	 */
 	public $depth = 0;
-
-	//public function __construct() {}
-	
-	public function setParentNodeIdKey($key) {
-		$this->nodeParentIdKey = $key;
-	}
-	
-	public function setNodeIdKey($key) {
-		$this->nodeIdKey = $key;
-	}
 	
 	/**
-	 * 填充要计算的数组
+	 * 在构造设置要计算的数组
 	 *
 	 * @param array $var
 	 * @param string $id
 	 * @param string $parentId
 	 */
-	public function set($vars, $id = 'id', $parentId = 'parent_id') {
-		if(!is_array($vars)) throw new \Exception("错误的数据类型");
+	public function __construct(array $vars, $id = 'id', $parentId = 'parent_id')
+	{		
 		foreach ($vars as $var) {
 			$this->inNodes[$var[$id]] = $var;
 		}
@@ -103,32 +94,24 @@ class Tree {
 		$this->nodeIdKey = $id;
 		$this->nodeParentIdKey = $parentId;
 	}
-	
-	/**
-	 * 添加结点
-	 *
-	 * @param array $node 结点
-	 * @param string $key = null 结点的下标
-	 */
-	public function add($node, $key = null) {
-		$node = $key ? array($key => $node) : array($node);
-		$this->inNodes = array_merge($this->inNodes, $node);
-	}
 
 	/**
 	 * 获取子结点,子结点将按父结点id和结点id来排序
 	 *
 	 * @param int $id 结点的id
 	 * @param bool $isReturnSelf 是否返回自己
-	 * @param array $unReturnFields 不返回的属性，可设置：[isLeaf, ancestorIdArr, descendantIdArr, descendantId, childArr, isLastNode, icon]
+	 * @param array $unReturnFields 设置不返回的属性，可设置：[isLeaf, ancestorIdArr, descendantIdArr, descendantId, childArr, isLastNode, icon]
 	 * @return array
 	 */
-	public function get($id = 0, $isReturnSelf = true, array $unReturnFields = []) {
+	public function get($id = 0, $isReturnSelf = true, array $unReturnFields = [])
+	{
 		// 层次排序
-		$this->levelOrder(0);
+		$this->parse(0);
 		
 		// 设置缩进图标/形状
-		empty($unReturnFields['icon']) && $this->setLevelIcon();
+		if(empty($unReturnFields['icon'])) {
+		    $this->parseLevelIcon();
+		}
 		
 		$cats = $this->outNodes;
 		if($id && isset($cats[$id])) {
@@ -157,10 +140,11 @@ class Tree {
 	}
 	
 	/**
-	 * 设置树的层次缩进图标/形状
+	 * 提取树的层次缩进图标/形状
 	 * 
 	 */
-	private function setLevelIcon() {
+	private function parseLevelIcon()
+	{
 	    $nodes  = $this->outNodes;
 	    $fidName = $this->nodeParentIdKey;
 	    
@@ -208,7 +192,8 @@ class Tree {
 	 *
 	 * @param int|string $id 结点id
 	 */
-	protected function levelOrder($id) {
+	protected function parse($id)
+	{
 		foreach($this->inNodes as $node) {
 			$nodeId   = $node[$this->nodeIdKey];  // 结点ID
 			$nodeFid  = $node[$this->nodeParentIdKey];  // 结点的父结点的id 		
@@ -253,16 +238,11 @@ class Tree {
 				//$this->addChildMark($nodeId, $nodeFid);
 				$this->depth = ($this->depth > $this->outNodes[$nodeId]['level']) ? $this->depth : $this->outNodes[$nodeId]['level'];
 				if($nodeId) {
-					$this->levelOrder($nodeId);				
+					$this->parse($nodeId);				
 				}
 				//unset($this->inNodes[$nodeId]);
 			}
 		}
 	}
-	
-	public function __destruct() {
-		unset($this->inNodes);
-		unset($this->outNodes);
-	}	
 }
 

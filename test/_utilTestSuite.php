@@ -3,7 +3,7 @@
 /**
  * Static test suite.
  */
-class utilTestSuite extends PHPUnit_Framework_TestSuite {
+class _utilTestSuite extends PHPUnit_Framework_TestSuite {
 	
 	/**
 	 * Constructs the test suite handler.

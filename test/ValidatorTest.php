@@ -44,11 +44,11 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Tests Validator::validErr()
 	 */
-	public function testValidErr() {
+	public function testValidate() {
 		$rules = [
 		    'user_name' => [
 		        // 验证方法只有一个参数
-		        'notEmpty'   => '请输入用户名', 
+		        'required'   => '请输入用户名', 
 		        'safeString' => '用户名只允许输入字母、数字和下划线',
 		
 		        // 验证方法需要多个参数
@@ -56,7 +56,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		        'maxLen'     => ['msg' => '用户名不能超过20个字符', 'maxLen' => 20],
 		    ],
 		    'email'    => [
-		        'notEmpty'   => '请输入邮箱', 
+		        'required'   => '请输入邮箱', 
 		        'email'      => '邮箱格式错误',
 		    ]
 		];		
@@ -68,7 +68,9 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 			'xxx' => '',
 			'yyy' => '',
 		];
-		$errs = Validator::validErr($data, $rules);
+		$obj = new Validator();
+		$obj->validate($data, $rules);
+		$errs = $obj->getErrors();
 		$this->assertEmpty($errs);
 		
 		// empty
@@ -76,7 +78,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 			'user_name' => '',
 			'email' => '',
 		];
-		$errs = Validator::validErr($data, $rules);		
+		$obj->validate($data, $rules);
+		$errs = $obj->getErrors();
 		$this->assertNotEmpty($errs);
 				
 		// minLen
@@ -84,7 +87,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 			'user_name' => 'aa',
 			'email' => 'cmpan@qq.com',
 		];
-		$errs = Validator::validErr($data, $rules);		
+		$obj->validate($data, $rules);
+		$errs = $obj->getErrors();
 		$this->assertNotEmpty($errs);
 		
 		// maxLen
@@ -92,7 +96,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 			'user_name' => '12345678901234567890xx',
 			'email' => 'cmpan@qq.com',
 		];
-		$errs = Validator::validErr($data, $rules);		
+		$obj->validate($data, $rules);
+		$errs = $obj->getErrors();
 		$this->assertNotEmpty($errs);
 		
 		// safe string
@@ -100,7 +105,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 			'user_name' => 'aaa^',
 			'email' => 'cmpan@qq.com',
 		];
-		$errs = Validator::validErr($data, $rules);		
+		$obj->validate($data, $rules);
+		$errs = $obj->getErrors();
 		$this->assertNotEmpty($errs);
 		
 		// email
@@ -108,7 +114,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 			'user_name' => 'aaaa',
 			'email' => 'cmpan.qq.com',
 		];
-		$errs = Validator::validErr($data, $rules);		
+		$obj->validate($data, $rules);
+		$errs = $obj->getErrors();
 		$this->assertNotEmpty($errs);
 	}
 	
@@ -123,17 +130,33 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	/**
 	 * Tests Validator::time()
 	 */
-	public function testTime() {
-		$this->assertFalse(Validator::time('dsf-x-d H;i;s'));
-		$this->assertTrue(Validator::time('2014-02-21 10:54:58'));
+	public function testDatetime() {
+	    $this->assertTrue(Validator::datetime('2014-02-21 10:54:58'));
+	    $this->assertTrue(Validator::datetime('2014/02/21 10:54:58'));
+	    $this->assertTrue(Validator::datetime('2014-02-1 10:54:58'));
+	    $this->assertTrue(Validator::datetime('2014-2-01 10:54:58'));
+	    $this->assertTrue(Validator::datetime('2014-2-01 0:0:0'));
+	    
+	    $this->assertFalse(Validator::datetime('dsf-x-d H:i:s'));
+	    $this->assertFalse(Validator::datetime('99999-01-01 00:00:00')); // 年
+	    $this->assertFalse(Validator::datetime('2000-13-01 00:00:00')); // 月
+	    $this->assertFalse(Validator::datetime('2000-001-01 00:00:00'));
+	    $this->assertFalse(Validator::datetime('2000-01-32 00:00:00')); // 日
+	    $this->assertFalse(Validator::datetime('2000-01-001 00:00:00'));
+	    $this->assertFalse(Validator::datetime('2000-01-01 24:00:00')); // 时
+	    $this->assertFalse(Validator::datetime('2000-01-01 000:00:00'));
+	    $this->assertFalse(Validator::datetime('2000-01-01 00:60:00')); // 分
+	    $this->assertFalse(Validator::datetime('2000-01-01 00:000:00'));
+	    $this->assertFalse(Validator::datetime('2000-01-01 00:00:60')); // 秒
+	    $this->assertFalse(Validator::datetime('2000-01-01 00:00:000')); 
 	}
 	
 	/**
-	 * Tests Validator::notEmpty()
+	 * Tests Validator::required()
 	 */
-	public function testNotEmpty() {
-		$this->assertTrue(Validator::notEmpty('ss'));
-		$this->assertFalse(Validator::notEmpty(''));
+	public function testRequired() {
+		$this->assertTrue(Validator::required('ss'));
+		$this->assertFalse(Validator::required(''));
 	}
 	
 	/**
@@ -170,11 +193,21 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	 * Tests Validator::url()
 	 */
 	public function testUrl() {
+	    $this->assertTrue(Validator::url('http://www.my.com'));
 		$this->assertTrue(Validator::url('http://my.net'));
-		$this->assertTrue(Validator::url('http://www.my.com'));
+		$this->assertTrue(Validator::url('http://my.com/'));
 		$this->assertTrue(Validator::url('http://my.com/sdfdf'));
 		$this->assertTrue(Validator::url('https://my.com/sdfdf'));
+		$this->assertTrue(Validator::url('https://xx.xx.cc/xx/xx/xx'));
 		$this->assertTrue(Validator::url('ftp://my.com/my.txt'));
+		$this->assertTrue(Validator::url('ftps://my.com/yy/zz/my.txt'));
+		$this->assertTrue(Validator::url('http://my.cc:80'));
+		$this->assertTrue(Validator::url('http://www.my.com:80'));
+		$this->assertTrue(Validator::url('http://www.my.com:80/path/to/x.html'));
+		$this->assertTrue(Validator::url('http://www.my.com:80/path/to/x.html#sdfw'));
+		$this->assertTrue(Validator::url('http://www.my.com:80/path/to/x.html?abc=ds&dsf=23#dsfsd'));
+		$this->assertTrue(Validator::url('http://www.my.com:80/允许有中文'));
+		$this->assertNotTrue(Validator::url('http://www.my.com:80/path/to/x.html sdsd'));// 不允许空格
 		$this->assertNotTrue(Validator::url('http://mycom/sdfdf'));
 		$this->assertNotTrue(Validator::url('http://mycom/my.net'));
 		$this->assertNotTrue(Validator::url('d:\dev\web\demo'));
@@ -198,9 +231,10 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	public function testYear() {
 		$this->assertTrue(Validator::year('1920'));
 		$this->assertTrue(Validator::year(2012));
-		$this->assertNotTrue(Validator::year(299));
-		$this->assertNotTrue(Validator::year('10'));
-		$this->assertNotTrue(Validator::year('33586'));
+		$this->assertTrue(Validator::year(299));
+		$this->assertTrue(Validator::year('10'));
+		$this->assertTrue(Validator::year('3356'));
+		$this->assertNotTrue(Validator::year('999999'));
 		$this->assertNotTrue(Validator::year('dsfdsfsf'));
 	}
 	
@@ -386,8 +420,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$dates = [
 			'2016-111-2',
 			'2016-2-333',
-			'120-01-2',
-			'19901-9-8',
+			'99999-01-2',
+			'32768-9-8',
 		];
 		foreach ($dates as $date) {
 			$this->assertNotTrue(Validator::date($date));
