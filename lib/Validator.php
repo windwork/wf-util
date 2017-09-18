@@ -53,13 +53,13 @@ class Validator {
 	{
 		$this->errors = [];
 		foreach ($rules as $key => $fieldRule) {
+            // 待验证字符串
+            $string = @$data[$key];
+
 			// 为空并且允许为空则不检查
-			if(empty($data[$key]) && !array_key_exists('required', $fieldRule)) {
+			if(empty($string) && !array_key_exists('required', $fieldRule)) {
 				continue;
 			}
-			
-			// 待验证字符串
-			$string = $data[$key];
 			
 			foreach ($fieldRule as $method => $msg) {
 				$method = trim($method);
@@ -67,7 +67,7 @@ class Validator {
 				// 自定义正则，下标第一个字符不是字母
 				// 自定义格式必须是以正则匹配规则作为下标，提示消息作为值
 				if (preg_match("/[^a-z]/i", $method[0])) {
-					if(!preg_match($method, $data[$key])) {
+					if(!preg_match($method, $string)) {
 						$this->errors[] = $msg;
 					}
 					
