@@ -37,26 +37,44 @@ Validator::url($str)         | 网址
 ## 批量验证
 
 ```
+// 验证规则
 $rules = [
     'user_name' => [
         // 验证方法只有一个参数
-        'required'   => '请输入用户名', 
-        'safeString' => '用户名只允许输入字母、数字和下划线',
-
+        [
+            'required' => true, 
+            'msg' => '请输入用户名'
+        ], 
+        [
+            'safeString' => true, 
+            'msg' => '用户名只允许输入字母、数字和下划线'
+        ],
         // 验证方法需要多个参数
-        'minLen'       => ['msg' => '用户名不能小于3个字符', 'minLen' => 3],
-        'maxLen'       => ['msg' => '用户名不能超过24个字符', 'maxLen' => 24],
+        [
+            'minLen' => 3, 
+            'maxLen' => 24, 
+            'msg' => '用户名长度要求为 3-24 个字符'
+        ],
     ],
-    'email'    => [
-        'required'   => '请输入邮箱', 
-        'email'        => '邮箱格式错误',
+    'email' => [
+        [
+            'required' => true, 
+            'msg' => '请输入邮箱'
+        ], 
+        [
+            'email' => true, 
+            'msg' => '邮箱格式错误'
+        ]
     ]
 ];
+
+// 待验证数组
 $data = [
     'user_name' => 'my_name_is_han_mei_mei',
     'password'  => '123456',
     'email'     => 'hanmeimei@windwork.org',
 ];
+
 $validator = new \wf\util\Validator();
 if(!$validator->validate($data, $rules)) {
     // 如果匹配错误，获取错误信息并进行处理

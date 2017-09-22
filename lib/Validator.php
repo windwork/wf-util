@@ -45,59 +45,78 @@ class Validator {
 	/**
 	 * 批量验证是否有错误
 	 * @param array $data 
-	 * @param array $rules 验证规则  ['待验证数组下标' => ['验证方法1' => '提示信息1', '验证方法2' => '提示信息2'], ...]
+	 * @param array $rules 验证规则 <code>[
+     *     '待验证数组下标' => [
+     *         [
+     *             '验证方法1' => true,
+     *             'msg' => '错误提示信息'
+     *         ],
+     *         [
+     *             '验证方法1' => true,
+     *             '验证方法2' => '参数值',
+     *             'msg' => '错误提示信息'
+     *         ],
+     *     ...
+     *   ]<code>
 	 * @param bool $firstErrBreak = false 第一次验证不通过时返回
 	 * @return bool
 	 */
-	public function validate(array $data, array $rules, $firstErrBreak = false)
+	public function validate(array $data, array $rules, $firstErrBreak = true)
 	{
 		$this->errors = [];
-		foreach ($rules as $key => $fieldRule) {
+		foreach ($rules as $field => $fieldRules) {
             // 待验证字符串
-            $string = @$data[$key];
+            $value = @$data[$field];
 
-			// 为空并且允许为空则不检查
-			if(empty($string) && !array_key_exists('required', $fieldRule)) {
-				continue;
-			}
-			
-			foreach ($fieldRule as $method => $msg) {
-				$method = trim($method);
-								
-				// 自定义正则，下标第一个字符不是字母
-				// 自定义格式必须是以正则匹配规则作为下标，提示消息作为值
-				if (preg_match("/[^a-z]/i", $method[0])) {
-					if(!preg_match($method, $string)) {
-						$this->errors[] = $msg;
-					}
-					
-					continue;
-				}
-				
-				$callback = "static::{$method}";
-				
-				if (is_array($msg)) {
-				    $isNot  = !empty($msg['not']);
-				    $valid  = call_user_func_array($callback, [$string, $msg]);
-				    
-					if(($isNot && $valid) || (!$isNot && !$valid)) {
-						$this->errors[] = $msg['msg'];
-						if ($firstErrBreak) {
-						    return false;
-						}
-					}
-				} elseif (!call_user_func($callback, $string)) {
-					// 验证方法只有待验证参数一个一个参数
-					$this->errors[] = $msg;
-					if ($firstErrBreak) {
-					    return false;
-					}
-				}
-			}
+            foreach ($fieldRules as $key => $ruleItems) {
+                if (isset($ruleItems['msg'])) {
+                    // 字段的验证规则为一维数组
+                    if(false === $this->validateItem($value, $ruleItems)) {
+                        $this->errors[] = $ruleItems['msg'];
+                        if ($firstErrBreak) {
+                            return false;
+                        }
+                    }
+                } else {
+                    // 字段的验证规则为二维数组
+                    foreach ($ruleItems as $ruleItem) {
+                        if(false === $this->validateItem($ruleItem)) {
+                            $this->errors[] = @$ruleItem['msg'];
+                            if ($firstErrBreak) {
+                                return false;
+                            }
+                        }
+                    }
+
+                }
+            }
 		}
-		
+
 		return empty($this->errors);
 	}
+
+    /**
+     * 执行每个验证规则组
+     *
+     * @param scalar $value
+     * @param array $rules
+     * @return bool
+     */
+	private function validateItem($value, $rules)
+    {
+        if (empty($value) && empty($rules['required'])) {
+            return true;
+        }
+
+        //
+        unset($rules['msg']);
+
+        foreach ($rules as $ruleName => $ruleValue) {
+            if (!call_user_func("static::{$ruleName}", $value, $ruleValue)) {
+                return false;
+            }
+        }
+    }
 	
 	/**
 	 * 参数格式是否email格式
@@ -162,7 +181,6 @@ class Validator {
 	 */
 	public static function url($str)
 	{
-	    preg_match("/^(http|ftp)[s]?:\\/\\/[a-z0-9_\\-\\.]+\\.+[a-z]{2,5}(\\:[\\d]+)?\\/?[^\\s]*$/i", $str, $m);
 		return (bool)preg_match("/^(http|ftp)[s]?:\\/\\/[a-z0-9_\\-\\.]+\\.+[a-z]{2,5}(\\:[\\d]+)?\\/?[^\\s]*$/i", $str);		
 	}
 

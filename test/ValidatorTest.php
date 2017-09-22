@@ -45,23 +45,38 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 	 * Tests Validator::validErr()
 	 */
 	public function testValidate() {
-		$rules = [
-		    'user_name' => [
-		        // 验证方法只有一个参数
-		        'required'   => '请输入用户名', 
-		        'safeString' => '用户名只允许输入字母、数字和下划线',
-		
-		        // 验证方法需要多个参数
-		        'minLen'     => ['msg' => '用户名不能小于3个字符', 'minLen' => 3],
-		        'maxLen'     => ['msg' => '用户名不能超过20个字符', 'maxLen' => 20],
-		    ],
-		    'email'    => [
-		        'required'   => '请输入邮箱', 
-		        'email'      => '邮箱格式错误',
-		    ]
-		];		
+	    // 验证规则
+        $rules = [
+            'user_name' => [
+                // 验证方法只有一个参数
+                [
+                    'required' => true,
+                    'msg' => '请输入用户名'
+                ],
+                [
+                    'safeString' => true,
+                    'msg' => '用户名只允许输入字母、数字和下划线'
+                ],
+                // 验证方法需要多个参数
+                [
+                    'minLen' => 3,
+                    'maxLen' => 24,
+                    'msg' => '用户名长度要求为 3-24 个字符'
+                ],
+            ],
+            'email' => [
+                [
+                    'required' => true,
+                    'msg' => '请输入邮箱'
+                ],
+                [
+                    'email' => true,
+                    'msg' => '邮箱格式错误'
+                ]
+            ]
+        ];
 
-		// ok
+        // ok
 		$data = [
 			'user_name' => 'cmpan',
 			'email' => 'cmpan@qq.com',
@@ -93,7 +108,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		
 		// maxLen
 		$data = [
-			'user_name' => '12345678901234567890xx',
+			'user_name' => '12345678901234567890xxxxx',
 			'email' => 'cmpan@qq.com',
 		];
 		$obj->validate($data, $rules);
@@ -108,6 +123,7 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$obj->validate($data, $rules);
 		$errs = $obj->getErrors();
 		$this->assertNotEmpty($errs);
+		print_r($errs);
 		
 		// email
 		$data = [
@@ -117,6 +133,8 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
 		$obj->validate($data, $rules);
 		$errs = $obj->getErrors();
 		$this->assertNotEmpty($errs);
+
+        print_r($errs);
 	}
 	
 	/**
