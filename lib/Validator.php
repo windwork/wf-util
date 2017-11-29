@@ -49,12 +49,12 @@ class Validator {
      *     '待验证数组下标' => [
      *         [
      *             '验证方法1' => true,
-     *             'msg' => '错误提示信息'
+     *             'message' => '错误提示信息'
      *         ],
      *         [
      *             '验证方法1' => true,
      *             '验证方法2' => '参数值',
-     *             'msg' => '错误提示信息'
+     *             'message' => '错误提示信息'
      *         ],
      *     ...
      *   ]<code>
@@ -69,10 +69,10 @@ class Validator {
             $value = @$data[$field];
 
             foreach ($fieldRules as $key => $ruleItems) {
-                if (isset($ruleItems['msg'])) {
+                if (isset($ruleItems['message'])) {
                     // 字段的验证规则为一维数组
                     if(false === $this->validateItem($value, $ruleItems)) {
-                        $this->errors[] = $ruleItems['msg'];
+                        $this->errors[] = $ruleItems['message'];
                         if ($firstErrBreak) {
                             return false;
                         }
@@ -81,7 +81,7 @@ class Validator {
                     // 字段的验证规则为二维数组
                     foreach ($ruleItems as $ruleItem) {
                         if(false === $this->validateItem($ruleItem)) {
-                            $this->errors[] = @$ruleItem['msg'];
+                            $this->errors[] = @$ruleItem['message'];
                             if ($firstErrBreak) {
                                 return false;
                             }
@@ -109,7 +109,7 @@ class Validator {
         }
 
         //
-        unset($rules['msg']);
+        unset($rules['message'], $rules['trigger']);
 
         foreach ($rules as $ruleName => $ruleValue) {
             if (!call_user_func("static::{$ruleName}", $value, $ruleValue)) {

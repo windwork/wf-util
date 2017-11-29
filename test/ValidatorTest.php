@@ -51,27 +51,27 @@ class ValidatorTest extends PHPUnit_Framework_TestCase {
                 // 验证方法只有一个参数
                 [
                     'required' => true,
-                    'msg' => '请输入用户名'
+                    'message' => '请输入用户名'
                 ],
                 [
                     'safeString' => true,
-                    'msg' => '用户名只允许输入字母、数字和下划线'
+                    'message' => '用户名只允许输入字母、数字和下划线'
                 ],
                 // 验证方法需要多个参数
                 [
                     'minLen' => 3,
                     'maxLen' => 24,
-                    'msg' => '用户名长度要求为 3-24 个字符'
+                    'message' => '用户名长度要求为 3-24 个字符'
                 ],
             ],
             'email' => [
                 [
                     'required' => true,
-                    'msg' => '请输入邮箱'
+                    'message' => '请输入邮箱'
                 ],
                 [
                     'email' => true,
-                    'msg' => '邮箱格式错误'
+                    'message' => '邮箱格式错误'
                 ]
             ]
         ];

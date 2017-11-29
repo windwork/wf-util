@@ -21,12 +21,12 @@ Validator::equalAll($str) | 值全等于（===）
 Validator::hex($str)      | 是否为16进制字符
 Validator::idCard($str)   | 中国身份证号码
 Validator::ip($str)          | 是否为IP地址
-Validator::max($str, $max)   | 值不大于 $max，如果$max为数组，结构为： <pre> $max = ['max' => 值, 'msg' => '匹配错误提示信息']</pre>
-Validator::min($str, $max)   | 值不小于 $min，如果$min为数组，结构为： <pre> $min = ['min' => 值, 'msg' => '匹配错误提示信息']</pre>
-Validator::len($str, $len)         | 值长度等于 $len，如果$len为数组，结构为： <pre> $min = ['min' => 值, 'msg' => '匹配错误提示信息']</pre>
-Validator::minLen($str, $minLen)   | 值长度不小于 $minLen，如果传入数组，结构为： <pre> $minLen = ['minLen' => 值, 'msg' => '匹配错误提示信息']</pre>
-Validator::maxLen($str, $maxLen)   | 值长度不大于 $maxLen，如果传入数组，结构为： <pre> $maxLen = ['maxLen' => 值, 'msg' => '匹配错误提示信息']</pre>
-Validator::preg($str, $preg)       | 自定义验证规则，$preg 可直接传入正则，如果传入数组，结构为 <pre> ['preg' => '正则规则', 'msg' => '匹配错误提示信息']</pre>
+Validator::max($str, $max)   | 值不大于 $max，如果$max为数组，结构为： <pre> $max = ['max' => 值, 'message' => '匹配错误提示信息']</pre>
+Validator::min($str, $max)   | 值不小于 $min，如果$min为数组，结构为： <pre> $min = ['min' => 值, 'message' => '匹配错误提示信息']</pre>
+Validator::len($str, $len)         | 值长度等于 $len，如果$len为数组，结构为： <pre> $min = ['min' => 值, 'message' => '匹配错误提示信息']</pre>
+Validator::minLen($str, $minLen)   | 值长度不小于 $minLen，如果传入数组，结构为： <pre> $minLen = ['minLen' => 值, 'message' => '匹配错误提示信息']</pre>
+Validator::maxLen($str, $maxLen)   | 值长度不大于 $maxLen，如果传入数组，结构为： <pre> $maxLen = ['maxLen' => 值, 'message' => '匹配错误提示信息']</pre>
+Validator::preg($str, $preg)       | 自定义验证规则，$preg 可直接传入正则，如果传入数组，结构为 <pre> ['preg' => '正则规则', 'message' => '匹配错误提示信息']</pre>
 Validator::mobile($str)      | 中国大陆手机号码
 Validator::money($str)       | 货币，两位小数的浮点数，小数点前面必须有数字
 Validator::number($str)      | 数字
@@ -43,27 +43,27 @@ $rules = [
         // 验证方法只有一个参数
         [
             'required' => true, 
-            'msg' => '请输入用户名'
+            'message' => '请输入用户名'
         ], 
         [
             'safeString' => true, 
-            'msg' => '用户名只允许输入字母、数字和下划线'
+            'message' => '用户名只允许输入字母、数字和下划线'
         ],
         // 验证方法需要多个参数
         [
             'minLen' => 3, 
             'maxLen' => 24, 
-            'msg' => '用户名长度要求为 3-24 个字符'
+            'message' => '用户名长度要求为 3-24 个字符'
         ],
     ],
     'email' => [
         [
             'required' => true, 
-            'msg' => '请输入邮箱'
+            'message' => '请输入邮箱'
         ], 
         [
             'email' => true, 
-            'msg' => '邮箱格式错误'
+            'message' => '邮箱格式错误'
         ]
     ]
 ];
