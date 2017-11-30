@@ -175,9 +175,9 @@ class Tree
 				$picon = '';
 			} else {
 				if ($nodes[$vIcon[$fidName]]['isLastNode']) {
-					$picon = substr($nodes[$vIcon[$fidName]]['icon'], 0, -3) . '&nbsp;';
+					$picon = substr($nodes[$vIcon[$fidName]]['icon'], 0, -2) . '&nbsp;';
 				} else {
-					$picon = substr($nodes[$vIcon[$fidName]]['icon'], 0, -3) . '|&nbsp;';
+					$picon = substr($nodes[$vIcon[$fidName]]['icon'], 0, -2) . '|&nbsp;';
 				}				
 			}
 			
