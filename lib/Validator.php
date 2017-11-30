@@ -64,33 +64,31 @@ class Validator {
 	public function validate(array $data, array $rules, $firstErrBreak = true)
 	{
 		$this->errors = [];
+
 		foreach ($rules as $field => $fieldRules) {
             // 待验证字符串
             $value = @$data[$field];
 
-            foreach ($fieldRules as $key => $ruleItems) {
-                if (isset($ruleItems['message'])) {
-                    // 字段的验证规则为一维数组
-                    if(false === $this->validateItem($value, $ruleItems)) {
-                        $this->errors[] = $ruleItems['message'];
+            if (isset($fieldRules['message'])) {
+                // 字段的验证规则为一维数组
+                if (false === $this->validateItem($value, $fieldRules)) {
+                    $this->errors[] = $fieldRules['message'];
+                    if ($firstErrBreak) {
+                        return false;
+                    }
+                }
+            } else {
+                // 字段的验证规则为二维数组
+                foreach ($fieldRules as $ruleItem) {
+                    if (false === $this->validateItem($value, $ruleItem)) {
+                        $this->errors[] = @$ruleItem['message'];
                         if ($firstErrBreak) {
                             return false;
                         }
                     }
-                } else {
-                    // 字段的验证规则为二维数组
-                    foreach ($ruleItems as $ruleItem) {
-                        if(false === $this->validateItem($ruleItem)) {
-                            $this->errors[] = @$ruleItem['message'];
-                            if ($firstErrBreak) {
-                                return false;
-                            }
-                        }
-                    }
-
                 }
             }
-		}
+        }
 
 		return empty($this->errors);
 	}
@@ -104,7 +102,7 @@ class Validator {
      */
 	private function validateItem($value, $rules)
     {
-        if (empty($value) && empty($rules['required'])) {
+        if (strlen($value) == 0 && empty($rules['required'])) {
             return true;
         }
 
@@ -131,14 +129,14 @@ class Validator {
 	}
 
 	/**
-	 * （notEmpty）参数是否为空，不为空则验证通过
+	 * 参数是否有内容（内容长度>0）
 	 *
 	 * @param string $var
 	 * @return bool
 	 */
 	public static function required($var)
 	{
-		return !empty($var);
+		return strlen((string)$var) > 0;
 	}
 
 	/**
