@@ -1,9 +1,9 @@
 <?php
 /**
  * Windwork
- * 
+ *
  * 一个用于快速开发高并发Web应用的轻量级PHP框架
- * 
+ *
  * @copyright Copyright (c) 2008-2017 Windwork Team. (http://www.windwork.org)
  * @license   http://opensource.org/licenses/MIT
  */
@@ -11,18 +11,18 @@ namespace wf\util;
 
 /**
  * 验证类
- * 
+ *
  * @package     wf.util
  * @author      cm <cmpan@qq.com>
  * @since       0.1.0
  */
 class Validator {
     /**
-     * 
+     *
      * @var array
      */
     private $errors = [];
-    
+
     /**
      * 获取批量匹配所有错误信息
      * @return array
@@ -31,20 +31,20 @@ class Validator {
     {
         return $this->errors;
     }
-    
+
     /**
      * 获取批量匹配规则最后一次错误信息
      * @return mixed
      */
     public function getLastError()
     {
-        $errors = $this->errors;        
+        $errors = $this->errors;
         return array_pop($errors);
     }
-    
+
 	/**
 	 * 批量验证是否有错误
-	 * @param array $data 
+	 * @param array $data
 	 * @param array $rules 验证规则 <code>[
      *     '待验证数组下标' => [
      *         [
@@ -102,7 +102,7 @@ class Validator {
      */
 	private function validateItem($value, $rules)
     {
-        if (strlen($value) == 0 && empty($rules['required'])) {
+        if (!$value && strlen($value) == 0 && empty($rules['required'])) {
             return true;
         }
 
@@ -115,7 +115,7 @@ class Validator {
             }
         }
     }
-	
+
 	/**
 	 * 参数格式是否email格式
 	 *
@@ -124,8 +124,7 @@ class Validator {
 	 */
 	public static function email($email)
 	{
-		return strpos($email, "@") !== false && strpos($email, ".") !== false &&
-		    (bool)preg_match("/^[a-z0-9_\\-\\.]+@[a-z0-9_\\-\\.]+\\.[a-z]{2,8}\$/i", $email);
+	    return filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
 
 	/**
@@ -136,7 +135,7 @@ class Validator {
 	 */
 	public static function required($var)
 	{
-		return strlen((string)$var) > 0;
+		return $var || strlen((string)$var) > 0;
 	}
 
 	/**
@@ -164,12 +163,12 @@ class Validator {
 	/**
 	 * 参数类型是否为IP
 	 *
-	 * @param string $var
+	 * @param string $str
 	 * @return bool
 	 */
-	public static function ip($var)
+	public static function ip($str)
 	{
-		return (bool)ip2long((string)$var);
+		return filter_var($str, FILTER_VALIDATE_IP);
 	}
 
 	/**
@@ -179,7 +178,7 @@ class Validator {
 	 */
 	public static function url($str)
 	{
-		return (bool)preg_match("/^(http|ftp)[s]?:\\/\\/[a-z0-9_\\-\\.]+\\.+[a-z]{2,5}(\\:[\\d]+)?\\/?[^\\s]*$/i", $str);		
+		return filter_var($str, FILTER_VALIDATE_URL);
 	}
 
 	/**
@@ -204,7 +203,7 @@ class Validator {
 	    if (!is_numeric($year)) {
 	        return false;
 	    }
-	    
+
 		return checkdate(1, 1, $year);
 	}
 
@@ -215,7 +214,7 @@ class Validator {
 	 * @return bool
 	 */
 	public static function month($month)
-	{	    
+	{
 	    return is_numeric($month) && strlen($month) <= 2 && ($month > 0 && $month <= 12);
 	}
 
@@ -272,14 +271,14 @@ class Validator {
 	public static function week($var)
 	{
 		$weeks = [
-		    1, 2, 3, 4, 5, 6, 7, 
-		    '１', '２', '３', '４', '５', '６', '７', 
-		    '一', '二', '三', '四', '五', '六', '天', '日', 
+		    1, 2, 3, 4, 5, 6, 7,
+		    '１', '２', '３', '４', '５', '６', '７',
+		    '一', '二', '三', '四', '五', '六', '天', '日',
 		    'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday',
 		    'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'
 		];
 		$var = strtolower($var);
-		
+
 		return in_array($var, $weeks);
 	}
 
@@ -304,19 +303,19 @@ class Validator {
 	public static function idCard($var)
 	{
 		$province = [
-		    "11", "12", "13", "14", "15", 
-		    "21", "22", "23", 
-		    "31", "32", "33", "34", "35", "36", "37", 
-		    "41", "42", "43", "44", "45", "46", 
-		    "50", "51", "52", "53", "54", 
-		    "61", "62", "63", "64", "65", 
+		    "11", "12", "13", "14", "15",
+		    "21", "22", "23",
+		    "31", "32", "33", "34", "35", "36", "37",
+		    "41", "42", "43", "44", "45", "46",
+		    "50", "51", "52", "53", "54",
+		    "61", "62", "63", "64", "65",
 		    "71", "81", "82", "91"
 		];
 		//前两位的省级代码
 		if(!in_array(substr($var, 0, 2), $province)) {
 			return false;
 		}
-		
+
 		if(strlen($var) == 15) {
 			if(!preg_match("/^\\d+$/", $var)) {
 				return false;
@@ -324,23 +323,23 @@ class Validator {
 			// 检查年-月-日（年前面加19）
 			return checkdate(substr($var, 8, 2), substr($var, 10, 2), "19" . substr($var, 6, 2));
 		}
-		
-		if(strlen($var) == 18) {			
+
+		if(strlen($var) == 18) {
 			if(!preg_match("/^\\d+$/", substr($var, 0, 17))) {
 				return false; // 前17位是否是数字
 			}
-			
+
 			//检查年-月-日
 			if(!@checkdate(substr($var, 10, 2), substr($var, 12, 2), substr($var, 6, 4))) {
 				return false;
 			}
-			
+
 			//加权因子Wi=2^（i-1）(mod 11)计算得出
 			$Wi_arr = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1];
-			
+
 			//校验码对应值
 			$VN_arr = [1, 0, 'x', 9, 8, 7, 6, 5, 4, 3, 2];
-			
+
 			//计算校验码总值(计算前17位的，最后一位为校验码)
 			$t = '';
 
@@ -350,7 +349,7 @@ class Validator {
 			}
 			//得到校验码
 			$VN = $VN_arr[($t % 11)];
-			
+
 			//判断最后一位的校验码
 			if($VN == substr($var, - 1)) {
 				return true;
@@ -358,7 +357,7 @@ class Validator {
 				return false;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -373,10 +372,10 @@ class Validator {
 		if(strlen($text) == 0) {
 			return true;
 		}
-		
+
 		return (preg_match('/^./us', $text) == 1);
 	}
-	
+
 	/**
 	 * 检查日期格式是否正确
 	 *
@@ -387,21 +386,21 @@ class Validator {
 	    if(!preg_match("/^([\\d]+)[\\-\\/]([\\d]{1,2})[\\-\\/]([\\d]{1,2})$/", $text, $match)) {
 	        return false;
 	    }
-	    
+
 	    list($_, $year, $month, $day) = $match;
-	    
+
 	    // 001
 	    if (strlen($month) > 2 || strlen($day) > 2) {
 	        return false;
 	    }
-	    
+
 	    if (!checkdate($month, $day, $year)) {
 	        return false;
 	    }
-	    
+
 	    return true;
 	}
-	
+
 	/**
 	 * 检查时间格式（YYYY-mm-dd HH:ii:ss）是否正确
 	 *
@@ -418,27 +417,27 @@ class Validator {
 	    if (strlen($month) > 2 || strlen($day) > 2) {
 	        return false;
 	    }
-	    
+
 	    // 001
 	    if (strlen($month) > 2 || strlen($day) > 2 || strlen($hour) > 2 || strlen($minute) > 2 || strlen($second) > 2) {
 	        return false;
 	    }
-	    
+
 	    // 时 0-23，分/秒 0-59
 	    if($hour >= 24 || $minute >= 60 || $second >= 60) {
 	        return false;
 	    }
-	    
+
 	    if (!checkdate($month, $day, $year)) {
 	        return false;
 	    }
-	    
+
 	    return true;
 	}
-	
+
 	/**
 	 * 是否是手机号
-	 * 
+	 *
 	 * @param number $mobile
 	 * @return bool
 	 */
@@ -446,7 +445,7 @@ class Validator {
 	{
 		return (bool)preg_match("/^1[34578]{1}[0-9]{9}$/", $mobile);
 	}
-	
+
 	/**
 	 * 字符串长度不超过
 	 * @param string $text
@@ -460,10 +459,10 @@ class Validator {
 	        }
 	        $maxLen = $maxLen['maxLen'];
 	    }
-	    
+
 	    return strlen($text) <= $maxLen;
 	}
-	
+
 	/**
 	 * 字符串长度不小于
 	 * @param string $text
@@ -477,10 +476,10 @@ class Validator {
 	        }
 	        $minLen = $minLen['minLen'];
 	    }
-	    
+
 	    return strlen($text) >= $minLen;
 	}
-	
+
 	/**
 	 * 字符串长度等于
 	 * @param string $text
@@ -494,10 +493,10 @@ class Validator {
 	        }
 	        $len = $len['minLen'];
 	    }
-	    
+
 	    return strlen($text) == $len;
 	}
-	
+
 	/**
 	 * 值等于（==）
 	 * @param string $text
@@ -511,11 +510,11 @@ class Validator {
 	        }
 	        $expect = $expect['expect'];
 	    }
-	    
+
 	    return $text == $expect;
 	}
-	
-	
+
+
 	/**
 	 * 值全等于（===）
 	 * @param string $text
@@ -529,10 +528,10 @@ class Validator {
 	        }
 	        $expect = $expect['expect'];
 	    }
-	    
+
 	    return $text === $expect;
 	}
-	
+
 	/**
 	 * 值不大于
 	 * @param number $val
@@ -546,10 +545,10 @@ class Validator {
 	        }
 	        $max = $max['max'];
 	    }
-	    
+
 	    return $val <= $max;
 	}
-	
+
 	/**
 	 * 值不小于
 	 * @param number $val
@@ -563,10 +562,10 @@ class Validator {
 	        }
 	        $min= $min['min'];
 	    }
-	    
+
 	    return $val >= $min;
 	}
-	
+
 	/**
 	 * 自定义正则匹配规则
 	 * @param string $text
@@ -578,15 +577,15 @@ class Validator {
 	    if (!$preg) {
 	        throw new \InvalidArgumentException('Please set the $preg pattern');
 	    }
-	    
+
 	    if (is_array($preg)) {
 	        if (empty($preg['preg'])) {
 	            throw new \InvalidArgumentException('The $preg argument must have "preg" key');
 	        }
 	        $preg = $preg['preg'];
 	    }
-	    
+
 	    return (bool)preg_match($preg, $text);
 	}
-		
+
 }
